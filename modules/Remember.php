@@ -42,12 +42,12 @@ class Remember {
 
 		foreach ($this->objects as $object2) {
 			$elements2 = Splitter::getElements($object2, true);
-			$candidates[$object2] = $this->getCoeff($elements1, $elements2);
+			$candidates[$object2] = $this->getCoeff($elements1, $elements2,  $object2);
 		}
 
-		foreach ($candidates as &$value) {
-			$value = $value[0]*($value[1]/$this->mcount); 
-		}
+		/*foreach ($candidates as &$value) {
+			//$value = $value[0]*($value[1]/$this->mcount)*($value[1]/count($elements1)); 
+		}*/
 
 		asort($candidates);
 		$candidates = array_reverse($candidates, true);
@@ -55,24 +55,39 @@ class Remember {
 		return array_shift(array_keys($candidates));
 	}
 
-	public function getCoeff($elements1, $elements2) {
+	public function getCoeff($elements1, $elements2, $object2) {
 		$summ = 0;
-		$count = 0;
+		$gradation = [];
+		//$count = 0;
 		foreach ($elements1 as $key1 => $value1) {
 			foreach ($elements2 as $key2 => $value2) {
-				$neuronCount =( $this->neurones[$key1 . '$' . $key2] ?? 0 );
+				//$neuronCount =( $this->neurones[$key1 . '$' . $key2] ?? 0 );
+				if($this->neurones[$key1 . '$' . $key2] ?? 0) {
+					$summ = $summ+($value1*$value1*$value2);
+					$gradation[$key1 . '$' . $key2] = $value1*$value1*$value2;
+				} 
+			/*	if($this->neurones[$key1 . '$' . $key2] ?? 0) {
+					return $value1 * $value2;
+				}
+			*/
 				//echo $key1 . ' ' . $key2 . ' ' . $neuronCount . ' ' . $value1 . ' ' . $value2 . '<br>';
-				$summ = $summ + ($value1 * $neuronCount * $value2);
+				//$summ = $summ + ($value1 * $neuronCount * $value2);
 				
-				if($neuronCount) {
+				/*if($neuronCount) {
 					$count++;
-				}			
+				}*/			
 			}			
 		}
-		
-		$this->mcount = max($this->mcount, $count);
+		/*$sumMax = 0;
+		foreach ($gradation as $quality => $quantity) {
+			$sumMax = max($sumMax, $quality*$quantity);
+		}*/
+		/*file_put_contents(mb_strtolower(trim(preg_replace(['/[^а-яa-z0-9\s]+/ui','/\s{2,}/'], ['', ' '], $object2))).'.json', json_encode([$summ,$summ/count($gradation),$summ*($summ/count($gradation)),$gradation]));*/
+		//return $sumMax;
+		return $summ*($summ/count($gradation));
+		//$this->mcount = max($this->mcount, $count);
 
-		return [$summ, $count];
+		//return [$summ, $count];
 	}	
 }
 

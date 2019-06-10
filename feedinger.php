@@ -2,8 +2,8 @@
 set_time_limit(3600);
 require 'requires/prolog.php';
 $block = file_get_contents('blocks/ru.conversations.txt');
-$in = 'Что теперь мне делать?';
-echo '<pre>';
+//$in = 'Ща пожру, тебя доделаю и тикать';
+//echo '<pre>';
 
 $block = explode("\n", $block);
 
@@ -17,8 +17,8 @@ foreach ($block as $key => $value) {
 }
 //die(print_r($firstSecond));
 //--neuro
-$textIn1 = 'А вот знаешь, я тебя сейчас буду делить на                         ЭлеМентарные частицы)';
-$textIn2 = 'Отлично! Потом мы увидим, как нейросеть обучилась!';
+//$textIn1 = 'А вот знаешь, я тебя сейчас буду делить на                         ЭлеМентарные частицы)';
+//$textIn2 = 'Отлично! Потом мы увидим, как нейросеть обучилась!';
 
 $evolutor = new Remember;
 
@@ -33,12 +33,12 @@ for ($i=0; $i < 5; $i++) {
 }
 var_dump($twains);
 */
-$t = time();
+//$t = time();
 /*while ($res = $twains->fetch()) {
 	$evolutor->evolute($res);
 }*/ //die('['.count($firstSecond).']');
 //$i = 0;
-foreach (array_slice($firstSecond, 50000,200) as $value) {
+foreach (array_slice($firstSecond, 80000, 500) as $value) {
 	
 	$twains = Splitter::generateTwains($value[0], $value[1]);
 	while ($res = $twains->fetch()) {
@@ -52,5 +52,13 @@ foreach (array_slice($firstSecond, 50000,200) as $value) {
 //$evolutor->cacheEvolute();
 
 //print_r($evolutor->getCount($in));
-echo $evolutor->find($in);
-die('['.(time()-$t).']');
+
+$thread = Async::thread();
+
+$thread->send(function($data) use($evolutor) {
+	if($data['message'] ?? false) {
+		return $evolutor->find($data['message']);
+	}
+});
+//echo $evolutor->find($in);
+//die('['.(time()-$t).']');
