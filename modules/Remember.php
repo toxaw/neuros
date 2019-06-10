@@ -57,14 +57,26 @@ class Remember {
 
 	public function getCoeff($elements1, $elements2, $object2) {
 		$summ = 0;
+		$nsumm = 0;
 		$gradation = [];
-		//$count = 0;
+		$ncount = 0;
+		$lsumm = 0;
+		$lallsumm = 0;
 		foreach ($elements1 as $key1 => $value1) {
+			$dd =false;
+			$lallsumm = $lallsumm+$value1;
 			foreach ($elements2 as $key2 => $value2) {
 				//$neuronCount =( $this->neurones[$key1 . '$' . $key2] ?? 0 );
 				if($this->neurones[$key1 . '$' . $key2] ?? 0) {
-					$summ = $summ+($value1*$value1*$value2);
-					$gradation[$key1 . '$' . $key2] = $value1*$value1*$value2;
+					$summ = $summ+$value1*$value2;
+					$gradation[$key1 . '$' . $key2] = $value1*$value2;
+					if(!$dd) {
+						$lsumm  = $lsumm + $value1;
+						$dd = true;
+					}
+				} else {
+					$ncount++;
+					$nsumm = $nsumm+$value1*$value2;
 				} 
 			/*	if($this->neurones[$key1 . '$' . $key2] ?? 0) {
 					return $value1 * $value2;
@@ -82,8 +94,10 @@ class Remember {
 		foreach ($gradation as $quality => $quantity) {
 			$sumMax = max($sumMax, $quality*$quantity);
 		}*/
-		/*file_put_contents(mb_strtolower(trim(preg_replace(['/[^а-яa-z0-9\s]+/ui','/\s{2,}/'], ['', ' '], $object2))).'.json', json_encode([$summ,$summ/count($gradation),$summ*($summ/count($gradation)),$gradation]));*/
+		/*file_put_contents('words/'.mb_strtolower(trim(preg_replace(['/[^а-яa-z0-9\s]+/ui','/\s{2,}/'], ['', ' '], $object2))).'.json', json_encode([$summ,$summ/count($gradation),$summ*($summ/count($gradation)),$gradation]));*/
 		//return $sumMax;
+		//return $summ*($summ/count($gradation));
+		file_put_contents('words/'.mb_strtolower(trim(preg_replace(['/[^а-яa-z0-9\s]+/ui','/\s{2,}/'], ['', ' '], $object2))).'.json', json_encode([$summ,$nsumm,count($gradation),$ncount,$summ/count($gradation),$lsumm/$lallsumm, $gradation]));
 		return $summ*($summ/count($gradation));
 		//$this->mcount = max($this->mcount, $count);
 
